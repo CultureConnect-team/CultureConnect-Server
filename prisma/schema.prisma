@@ -12,8 +12,10 @@ model User {
   name     String
   email    String  @unique
   password String
+  token    String?
   createdAt DateTime @default(now())
 }
+
 
 model Destination {
   id          String  @id @default(uuid())

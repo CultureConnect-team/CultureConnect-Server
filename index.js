@@ -6,6 +6,10 @@ require("dotenv").config();
 const app = express();
 const prisma = new PrismaClient();
 
+const authRoutes = require("./routes/authRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const destinationRoutes = require("./routes/destinationRoutes");
+
 app.use(cors());
 app.use(express.json());
 
@@ -13,20 +17,10 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Ambil semua destinasi wisata
-app.get("/destinations", async (req, res) => {
-  const destinations = await prisma.destination.findMany();
-  res.json(destinations);
-});
-
-// Tambah destinasi wisata
-app.post("/destinations", async (req, res) => {
-  const { name, description, location, imageUrl } = req.body;
-  const newDestination = await prisma.destination.create({
-    data: { name, description, location, imageUrl },
-  });
-  res.json(newDestination);
-});
+// Gunakan route yang telah dipisahkan
+app.use("/auth", authRoutes);
+app.use("/dashboard", dashboardRoutes);
+app.use("/destinations", destinationRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
