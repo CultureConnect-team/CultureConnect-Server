@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
     if (existingUser) errors.email = "Email sudah digunakan";
 
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json({ errors });
+      return res.status(400).json(errors);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -48,7 +48,7 @@ exports.login = async (req, res) => {
     }
 
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json({ errors });
+      return res.status(400).json(errors);
     }
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
