@@ -8,13 +8,20 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  name     String
-  email    String  @unique
-  password String
-  token    String?
-  createdAt DateTime @default(now())
+  id                 String   @id @default(uuid())
+  name               String
+  age                Int
+  gender             String
+  city               String
+  culturePreference  Json
+  culinaryPreference Json
+  travelFrequency    String
+  transportPreference String
+  groupPreference    String
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
 }
+
 
 
 model Destination {
