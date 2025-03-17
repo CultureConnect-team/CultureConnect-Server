@@ -12,7 +12,9 @@ const destinationRoutes = require("./routes/destinationRoutes");
 
 // Konfigurasi CORS
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: 
+      "http://localhost:5173"
+      || "https://culture-connect-iota.vercel.app",
   credentials: true,
 }));
 
