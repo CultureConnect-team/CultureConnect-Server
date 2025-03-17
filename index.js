@@ -6,15 +6,13 @@ require("dotenv").config();
 const app = express();
 const prisma = new PrismaClient();
 
-// Import Routes
 const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const destinationRoutes = require("./routes/destinationRoutes");
 
 // Konfigurasi CORS
-const allowedOrigins = [process.env.CLIENT_URL || "http://localhost:5173"];
 app.use(cors({
-  origin: allowedOrigins,
+  origin: "http://localhost:5173",
   credentials: true,
 }));
 
