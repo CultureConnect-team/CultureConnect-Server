@@ -53,6 +53,28 @@ exports.login = async (req, res) => {
   }
 };
 
+
+exports.checkAuth = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.json({ isAuthenticated: false });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+
+    if (!user) {
+      return res.json({ isAuthenticated: false });
+    }
+
+    res.json({ isAuthenticated: true, user: { id: user.id, name: user.name, email: user.email } });
+  } catch (error) {
+    return res.json({ isAuthenticated: false });
+  }
+};
+
+
 exports.logout = (req, res) => {
   res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "None" });
   res.status(200).json({ message: "Logout berhasil" });
