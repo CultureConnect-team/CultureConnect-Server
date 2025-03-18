@@ -39,9 +39,21 @@ exports.login = async (req, res) => {
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "2h" });
 
-    res.json({ message: "Login berhasil", token });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production" ? true : false, 
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 24 * 60 * 60 * 1000, 
+    });    
+
+    res.json({ message: "Login berhasil" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Terjadi kesalahan pada server" });
   }
+};
+
+exports.logout = (req, res) => {
+  res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "None" });
+  res.status(200).json({ message: "Logout berhasil" });
 };

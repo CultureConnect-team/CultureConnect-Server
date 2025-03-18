@@ -1,17 +1,22 @@
 const jwt = require("jsonwebtoken");
 
 const authenticateUser = (req, res, next) => {
-  const authHeader = req.header("Authorization");
+  let token;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Token tidak tersedia atau format salah" });
+  if (req.cookies && req.cookies.token) {
+    token = req.cookies.token;
+  }
+  else if (req.header("Authorization") && req.header("Authorization").startsWith("Bearer ")) {
+    token = req.header("Authorization").split(" ")[1];
+  }
+
+  if (!token) {
+    return res.status(401).json({ error: "Token tidak tersedia" });
   }
 
   try {
-    const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    req.user = decoded; 
+    req.user = decoded;
     next();
   } catch (error) {
     console.error("JWT Error:", error.message);

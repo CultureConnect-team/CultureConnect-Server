@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const { PrismaClient } = require("@prisma/client");
 require("dotenv").config();
 
@@ -12,11 +13,13 @@ const destinationRoutes = require("./routes/destinationRoutes");
 
 // Konfigurasi CORS
 app.use(cors({
-  origin:"https://culture-connect-iota.vercel.app",
+  origin:["https://culture-connect-iota.vercel.app", "http://localhost:5173"],
   credentials: true,
 }));
 
 app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
 // Root API Route
 app.get("/", (req, res) => {
