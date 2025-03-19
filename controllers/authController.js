@@ -1,7 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-
 const prisma = new PrismaClient();
 
 exports.register = async (req, res) => {
@@ -26,56 +24,42 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await prisma.user.findUnique({ where: { email } });
+
     if (!user) {
-      return res.status(400).json({ email: "Akun tidak ditemukan" });
+      return res.status(401).json({ email: "Email tidak ditemukan" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ password: "Password salah" });
+      return res.status(401).json({ password: "Password salah" });
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "2h" });
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production" ? true : false, 
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-      maxAge: 24 * 60 * 60 * 1000, 
-    });    
-
-    res.json({ message: "Login berhasil" });
+    req.session.user = { id: user.id, email: user.email, name: user.name }; // Simpan user di session
+    res.json({ message: "Login berhasil", user: req.session.user });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Terjadi kesalahan pada server" });
+    console.error("Login Error:", error);
+    res.status(500).json({ error: "Terjadi kesalahan saat login" });
   }
 };
 
 
-exports.checkAuth = async (req, res) => {
-  try {
-    const token = req.cookies.token;
-    if (!token) {
-      return res.json({ isAuthenticated: false });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
-
-    if (!user) {
-      return res.json({ isAuthenticated: false });
-    }
-
-    res.json({ isAuthenticated: true, user: { id: user.id, name: user.name, email: user.email } });
-  } catch (error) {
-    return res.json({ isAuthenticated: false });
+exports.checkAuth = (req, res) => {
+  if (req.session.user) {
+    return res.json({ isAuthenticated: true, user: req.session.user });
   }
+  res.json({ isAuthenticated: false });
 };
 
 
 exports.logout = (req, res) => {
-  res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "None" });
-  res.status(200).json({ message: "Logout berhasil" });
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ error: "Gagal logout" });
+    }
+    res.clearCookie("connect.sid");
+    res.json({ message: "Logout berhasil" });
+  });
 };

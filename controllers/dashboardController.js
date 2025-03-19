@@ -1,10 +1,10 @@
 exports.getDashboardData = async (req, res) => {
   try {
-    console.log("User Data from Token:", req.user); // Debugging
+    console.log("User Data from Session:", req.user);
 
     res.json({
       message: "Berhasil mengakses dashboard",
-      user: req.user, // Pastikan req.user tersedia
+      user: req.user,
       dashboardData: {
         visitors: 1000,
         revenue: 5000,
@@ -12,7 +12,7 @@ exports.getDashboardData = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error in getDashboardData:", error); // Tambahkan debugging
+    console.error("Error in getDashboardData:", error);
     res.status(500).json({ error: "Gagal mengambil data dashboard" });
   }
 };
