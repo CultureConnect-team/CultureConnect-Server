@@ -4,6 +4,7 @@ const authenticateUser = (req, res, next) => {
   }
 
   req.user = req.session.user; // Menyimpan user di req agar bisa digunakan di controller
+  console.log("User authenticated:", req.user);
   next();
 };
 
