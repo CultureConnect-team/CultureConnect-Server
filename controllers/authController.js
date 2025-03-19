@@ -38,6 +38,8 @@ exports.login = async (req, res) => {
     }
 
     req.session.user = { id: user.id, email: user.email, name: user.name }; // Simpan user di session
+    console.log("Session saved:", req.session);
+
     res.json({ message: "Login berhasil", user: req.session.user });
   } catch (error) {
     console.error("Login Error:", error);
