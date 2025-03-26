@@ -52,23 +52,8 @@ exports.login = async (req, res) => {
 
     res.json({ message: "Login berhasil", user: { id: user.id, email: user.email, name: user.name, token: token } });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: "Terjadi kesalahan saat login" });
-  }
-};
-
-exports.checkAuth = async (req, res) => {
-  try {
-    const token = req.cookies.token;
-    if (!token) return res.status(401).json({ isAuthenticated: false });
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
-
-    if (!user) return res.status(401).json({ isAuthenticated: false });
-
-    res.json({ isAuthenticated: true, user: { id: user.id, email: user.email, name: user.name } });
-  } catch (error) {
-    res.status(500).json({ error: "Terjadi kesalahan" });
   }
 };
 

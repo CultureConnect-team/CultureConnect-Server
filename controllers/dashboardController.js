@@ -2,7 +2,11 @@ exports.getDashboardData = async (req, res) => {
   try {
     res.json({
       message: "Berhasil mengakses dashboard",
-      user: req.user,
+      user: {
+        id: req.user.id,
+        email: req.user.email,
+        name: req.user.name, 
+      },
       dashboardData: {
         visitors: 1000,
         revenue: 5000,
