@@ -10,35 +10,44 @@ datasource db {
 model User {
   id                  String   @id @default(uuid())
   name                String
+  age                 Int?
+  city                String?
+  created_at          DateTime @default(now())
+  culinaryPreference  Json?
+  culturePreference   Json?
+  gender              String?
+  groupPreference     String?
+  transportPreference String?
+  travelFrequency     String?
+  updated_at          DateTime @updatedAt
   email               String   @unique
   password            String
-  age                 Int? 
-  gender              String?
-  city                String?
-  culturePreference   Json?
-  culinaryPreference  Json?
-  travelFrequency     String?
-  transportPreference String?
-  groupPreference     String?
-  created_at          DateTime @default(now())
-  updated_at          DateTime @updatedAt
+
+  savedDestinations SavedDestination[]
 }
-
-
-model Session {
-  id           String   @id @default(uuid())
-  sid          String   @unique
-  data         String
-  expiresAt    DateTime
-}
-
-
 
 model Destination {
-  id          String  @id @default(uuid())
+  id          String   @id @default(cuid())
   name        String
   description String
   location    String
-  imageUrl    String?
+  imageUrl    String
   createdAt   DateTime @default(now())
+  category    String
+  rating      Float
+  coordinate  Json?
+
+  savedBy SavedDestination[]
+}
+
+model SavedDestination {
+  id            Int      @id @default(autoincrement())
+  userId        String
+  destinationId String
+  createdAt     DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id]) 
+  destination Destination @relation(fields: [destinationId], references: [id])
+
+  @@unique([userId, destinationId]) // Constraint unik untuk mencegah duplikasi
 }
