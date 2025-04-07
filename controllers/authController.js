@@ -36,10 +36,14 @@ exports.login = async (req, res) => {
 
   try {
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.status(401).json({ email: "Email tidak ditemukan" });
+    if (!user) {
+      return res.status(401).json({ email: "Email tidak ditemukan" });
+    }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) return res.status(401).json({ password: "Password salah" });
+    if (!isPasswordValid) {
+      return res.status(401).json({ password: "Password salah" });
+    }
 
     const token = generateToken(user);
 
@@ -47,12 +51,11 @@ exports.login = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "None",
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.json({ message: "Login berhasil", user: { id: user.id, email: user.email, name: user.name, token: token } });
   } catch (error) {
-    console.log(error)
     res.status(500).json({ error: "Terjadi kesalahan saat login" });
   }
 };
