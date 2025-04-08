@@ -16,7 +16,7 @@ exports.register = async (req, res) => {
   try {
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ email : "Email sudah digunakan" });
+      return res.status(400).json({ email: "Email sudah digunakan" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -25,7 +25,13 @@ exports.register = async (req, res) => {
       data: { name, email, password: hashedPassword },
     });
 
-    res.status(201).json({ message: "Registrasi berhasil" });
+    const token = generateToken(newUser);
+
+    res.status(201).json({
+      message: "Registrasi berhasil",
+      token,
+      user: { id: newUser.id, name: newUser.name, email: newUser.email },
+    });
   } catch (error) {
     res.status(500).json({ error: "Terjadi kesalahan pada server" });
   }
