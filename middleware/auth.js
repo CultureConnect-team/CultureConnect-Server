@@ -19,9 +19,10 @@ const verifyToken = async (req, res, next) => {
       return res.status(404).json({ message: "Pengguna tidak ditemukan" });
     }
 
-    req.user = user; 
+    req.user = user;
     next();
   } catch (error) {
+    console.error("Error in verifyToken middleware:", error);
     return res.status(403).json({ message: "Token tidak valid atau telah kedaluwarsa" });
   }
 };

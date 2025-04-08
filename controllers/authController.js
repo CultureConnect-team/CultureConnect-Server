@@ -25,7 +25,7 @@ exports.register = async (req, res) => {
       data: { name, email, password: hashedPassword },
     });
 
-    res.status(201).json({ message: "Registrasi berhasil", user: { id: newUser.id, name: newUser.name, email: newUser.email } });
+    res.status(201).json({ message: "Registrasi berhasil" });
   } catch (error) {
     res.status(500).json({ error: "Terjadi kesalahan pada server" });
   }
@@ -47,14 +47,8 @@ exports.login = async (req, res) => {
 
     const token = generateToken(user);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
     res.json({ message: "Login berhasil", user: { id: user.id, email: user.email, name: user.name, token: token } });
+  
   } catch (error) {
     res.status(500).json({ error: "Terjadi kesalahan saat login" });
   }

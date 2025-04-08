@@ -8,23 +8,49 @@ datasource db {
 }
 
 model User {
-  id                  String   @id @default(uuid())
-  name                String
-  age                 Int?
-  city                String?
-  created_at          DateTime @default(now())
+  id          String       @id @default(uuid())
+  name        String
+  email       String       @unique
+  password    String
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+
+  userProfile UserProfile?
+  userPreference UserPreference?
+  savedDestinations SavedDestination[]
+}
+
+model UserProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  profilePic  String?
+  bio         String?
+  gender      String?
+  age         Int?
+  address     String?
+  city        String?
+  province    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserPreference {
+  id                  String   @id @default(cuid())
+  userId              String
   culinaryPreference  Json?
   culturePreference   Json?
-  gender              String?
   groupPreference     String?
   transportPreference String?
   travelFrequency     String?
-  updated_at          DateTime @updatedAt
-  email               String   @unique
-  password            String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-  savedDestinations SavedDestination[]
+  user User @relation(fields: [userId], references: [id])
+  @@unique([userId])
 }
+
 
 model Destination {
   id          String   @id @default(cuid())
@@ -49,5 +75,5 @@ model SavedDestination {
   user        User        @relation(fields: [userId], references: [id]) 
   destination Destination @relation(fields: [destinationId], references: [id])
 
-  @@unique([userId, destinationId]) // Constraint unik untuk mencegah duplikasi
+  @@unique([userId, destinationId])
 }

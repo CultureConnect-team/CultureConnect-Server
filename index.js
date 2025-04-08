@@ -8,6 +8,7 @@ const app = express();
 const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const destinationsRoutes = require("./routes/destinationsRoutes");
+const profileRoutes = require("./routes/profileRoutes");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -24,6 +25,7 @@ app.use(
 app.use("/auth", authRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/destinations", destinationsRoutes);
+app.use("/profile", profileRoutes);
 
 app.use((err, req, res, next) => {
   console.error("Server Error:", err);
