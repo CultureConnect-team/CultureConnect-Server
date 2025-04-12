@@ -1,9 +1,9 @@
 const express = require("express");
-const { getDashboardData } = require("../controllers/dashboardController");
+const { getUserData } = require("../controllers/userController");
 const verifyToken = require("../middleware/auth");
 
 const router = express.Router();
 
-router.get("/", verifyToken, getDashboardData);
+router.get("/", verifyToken, getUserData);
 
 module.exports = router;

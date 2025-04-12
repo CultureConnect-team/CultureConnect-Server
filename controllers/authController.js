@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Joi = require("joi");
 
 const prisma = new PrismaClient();
 
@@ -10,7 +11,23 @@ const generateToken = (user) => {
   });
 };
 
+const registerSchema = Joi.object({
+  name: Joi.string().min(3).max(50).required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(8).required(),
+});
+
+const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+});
+
 exports.register = async (req, res) => {
+  const { error } = registerSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { name, email, password } = req.body;
 
   try {
@@ -33,11 +50,17 @@ exports.register = async (req, res) => {
       user: { id: newUser.id, name: newUser.name, email: newUser.email },
     });
   } catch (error) {
+    console.error("Error during registration:", error);
     res.status(500).json({ error: "Terjadi kesalahan pada server" });
   }
 };
 
 exports.login = async (req, res) => {
+  const { error } = loginSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   const { email, password } = req.body;
 
   try {
@@ -53,19 +76,17 @@ exports.login = async (req, res) => {
 
     const token = generateToken(user);
 
-    res.json({ message: "Login berhasil", user: { id: user.id, email: user.email, name: user.name, token: token } });
-  
+    res.json({
+      message: "Login berhasil",
+      user: { id: user.id, email: user.email, name: user.name, token: token },
+    });
   } catch (error) {
     res.status(500).json({ error: "Terjadi kesalahan saat login" });
   }
 };
 
 exports.logout = (req, res) => {
-  res.clearCookie("token", { 
-    httpOnly: true, 
-    secure: process.env.NODE_ENV === "production", 
-    sameSite: "None" 
+  return res.status(200).json({
+    message: "Logout berhasil, silakan hapus token di localStorage jika menggunakan penyimpanan client.",
   });
-
-  return res.status(200).json({ message: "Logout berhasil, silakan hapus token di localStorage jika menggunakan penyimpanan client." });
 };

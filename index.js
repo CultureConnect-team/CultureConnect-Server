@@ -6,9 +6,10 @@ require("dotenv").config();
 const app = express();
 
 const authRoutes = require("./routes/authRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
+const userRoutes = require("./routes/userRoutes");
 const destinationsRoutes = require("./routes/destinationsRoutes");
 const profileRoutes = require("./routes/profileRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -23,9 +24,10 @@ app.use(
 );
 
 app.use("/auth", authRoutes);
-app.use("/dashboard", dashboardRoutes);
+app.use("/user", userRoutes);
 app.use("/destinations", destinationsRoutes);
 app.use("/profile", profileRoutes);
+app.use("/upload", uploadRoutes);
 
 app.use((err, req, res, next) => {
   console.error("Server Error:", err);
@@ -33,7 +35,7 @@ app.use((err, req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Api sudah berhasil dijalankan");
+  res.send("<h1>Api sedang berjalan pada port atau halaman ini</h1>");
 });
 
 const PORT = process.env.PORT || 5000;
