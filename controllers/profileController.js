@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 const addUserProfile = async (req, res) => {
   try {
     const userId = req.user.id; 
-    const { profilePic, bio, gender, age, address, city, province } = req.body;
+    const { profilePic, bio, gender, age, address, city, province, district, village } = req.body;
 
     const existingProfile = await prisma.userProfile.findUnique({
       where: { userId },
@@ -25,6 +25,8 @@ const addUserProfile = async (req, res) => {
         address,
         city,
         province,
+        district,
+        village, 
       },
     });
 
@@ -56,12 +58,12 @@ const getUserProfile = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { profilePic, bio, gender, age, address, city, province } = req.body;
+    const { profilePic, bio, gender, age, address, city, province, district, village } = req.body;
 
     const updatedProfile = await prisma.userProfile.upsert({
       where: { userId },
-      update: { profilePic, bio, gender, age, address, city, province },
-      create: { userId, profilePic, bio, gender, age, address, city, province },
+      update: { profilePic, bio, gender, age, address, city, province, district, village },
+      create: { userId, profilePic, bio, gender, age, address, city, province, district, village },
     });
 
     res.json(updatedProfile);
