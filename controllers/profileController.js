@@ -58,7 +58,7 @@ const getUserProfile = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { profilePic, bio, gender, age, address, city, province, district, village } = req.body;
+    const { profilePic, bio, gender, age, address, city, province, district, village, name } = req.body;
 
     const updatedProfile = await prisma.userProfile.upsert({
       where: { userId },
@@ -66,7 +66,12 @@ const updateUserProfile = async (req, res) => {
       create: { userId, profilePic, bio, gender, age, address, city, province, district, village },
     });
 
-    res.json(updatedProfile);
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { name },
+    });
+
+    res.json(...updatedProfile, ...updatedUser);
   } catch (error) {
     console.error("Error saat memperbarui profil pengguna:", error);
     res.status(500).json({ error: "Gagal memperbarui profil pengguna" });
