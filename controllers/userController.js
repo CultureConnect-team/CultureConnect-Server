@@ -23,6 +23,6 @@ exports.getUserData = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ error: "Gagal mengambil data dashboard" });
+    res.status(500).json({ error: "Gagal mengambil data pengguna" });
   }
 };

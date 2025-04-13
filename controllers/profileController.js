@@ -71,12 +71,16 @@ const updateUserProfile = async (req, res) => {
       data: { name },
     });
 
-    res.json(...updatedProfile, ...updatedUser);
+    res.json({
+      ...updatedUser,
+      profile: updatedProfile,
+    });
   } catch (error) {
     console.error("Error saat memperbarui profil pengguna:", error);
     res.status(500).json({ error: "Gagal memperbarui profil pengguna" });
   }
 };
+
 
 const deleteUserProfile = async (req, res) => {
   try {
