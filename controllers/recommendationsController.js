@@ -28,6 +28,10 @@ const recommendationControllers = async (req, res) => {
       rating: parseFloat(RatePreference),
     });
 
+    if (!response.data?.rekomendasi?.length) {
+      console.warn("Tidak ada rekomendasi ditemukan. Cek apakah kategori valid.");
+    }    
+
     res.json(response.data);
   } catch (error) {
     console.error("Error saat mengambil rekomendasi:", error.message);
