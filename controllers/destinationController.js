@@ -27,11 +27,11 @@ exports.getDestinationById = async (req, res) => {
 };
 
 exports.addDestination = async (req, res) => {
-  const { name, category, location, imageUrl, rating, description, coordinate } = req.body;
+  const { id, name, category, location, imageUrl, rating, description, coordinate } = req.body;
 
   try {
     const newDestination = await prisma.destination.create({
-      data: { name, category, location, imageUrl, rating, description, coordinate },
+      data: { id, name, category, location, imageUrl, rating, description, coordinate },
     });
     res.status(201).json(newDestination);
   } catch (error) {

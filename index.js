@@ -10,6 +10,8 @@ const userRoutes = require("./routes/userRoutes");
 const destinationsRoutes = require("./routes/destinationsRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
+const recommendationsRoutes = require("./routes/recommendationsRoutes");
+const preferenceRoutes = require("./routes/preferenceRoutes")
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -28,6 +30,8 @@ app.use("/user", userRoutes);
 app.use("/destinations", destinationsRoutes);
 app.use("/profile", profileRoutes);
 app.use("/upload", uploadRoutes);
+app.use("/recommendations", recommendationsRoutes);
+app.use("/preferences", preferenceRoutes)
 
 app.use((err, req, res, next) => {
   console.error("Server Error:", err);
