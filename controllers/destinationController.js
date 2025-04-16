@@ -15,14 +15,15 @@ exports.getDestinationById = async (req, res) => {
 
   try {
     const destination = await prisma.destination.findUnique({
-      where: { id },
-    });
+      where: { id: parseInt(id) },
+    });    
     if (!destination) {
       return res.status(404).json({ error: "Destinasi tidak ditemukan" });
     }
     res.json(destination);
   } catch (error) {
     res.status(500).json({ error: "Gagal mengambil data destinasi" });
+  } finally {
   }
 };
 
